@@ -2,8 +2,6 @@ name: High-Throughput Cluster Pipeline
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 * * * *'
 
 concurrency:
   group: cluster-pool-${{ github.workflow }}-${{ github.ref }}
@@ -13,7 +11,7 @@ jobs:
   dispatch-cluster:
     name: "Node-${{ matrix.machine_id }}"
     runs-on: windows-2022
-    timeout-minutes: 75
+    timeout-minutes: 360
 
     strategy:
       fail-fast: false
@@ -53,10 +51,10 @@ jobs:
           }
           $WorkerTask = Start-Process @InvocationConfig
           
-          Write-Host ">>> Watchdog actively monitoring. Timeout cap: 74 minutes."
+          Write-Host ">>> Watchdog actively monitoring. Timeout cap: 360 minutes."
           
           try {
-              Wait-Process -InputObject $WorkerTask -Timeout 4440 -ErrorAction Stop
+              Wait-Process -InputObject $WorkerTask -Timeout 21600 -ErrorAction Stop
               Write-Host ">>> Workload completed within designated operational limit."
           }
           catch {
